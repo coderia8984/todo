@@ -5,18 +5,8 @@ const App = () => {
   const [cardContext, setCardContext] = useState([
     {
       id: 1,
-      title: "리액트 공부하기",
-      context: "리액트 기초를 공부해봅시다",
-    },
-    {
-      id: 2,
-      title: "리액트 공부하기",
-      context: "리액트 기초를 공부해봅시다",
-    },
-    {
-      id: 3,
-      title: "리액트 공부하기",
-      context: "리액트 기초를 공부해봅시다",
+      title: "리액트공부하기",
+      context: "과제제출하기",
     },
   ]);
 
@@ -30,13 +20,22 @@ const App = () => {
     setContext(event.target.value);
   };
 
-  const addButtonHandler = () => {
+  //추가하기 버튼 클릭
+  const addButtonHandler = (e) => {
+    e.preventDefault();
     const newCard = {
       id: cardContext.length + 1,
       title,
       context,
     };
-    setCardContext([...cardContext, { newCard }]);
+
+    setCardContext([...cardContext, newCard]);
+  };
+
+  //삭제하기 버튼 클릭
+  const clickDeleteButtonHandler = (id) => {
+    const newCard = cardContext.filter((card) => card.id !== id);
+    setCardContext(newCard);
   };
 
   return (
@@ -46,7 +45,7 @@ const App = () => {
           <div>My Todo List</div>
           <div>React</div>
         </div>
-        <form className='addForm'>
+        <form className='addForm' onSubmit={addButtonHandler}>
           <div className='inputGroup'>
             <label className='formLabel'>제목</label>
             <input type='text' className='input' value={title} onChange={titleChangeHandler} />
@@ -62,15 +61,7 @@ const App = () => {
           <div>
             <div className='wrapper'>
               {cardContext.map(function (item) {
-                return (
-                  <div key={item.id} className='todoBox'>
-                    {item.title}-{item.context}
-                    <div className='listBtns'>
-                      <button className='deleteBtn'>삭제하기</button>
-                      <button className='completeBtn'>완료</button>
-                    </div>
-                  </div>
-                );
+                return <Box key={item.id} item={item} deleteFunction={clickDeleteButtonHandler} />;
               })}
             </div>
           </div>
@@ -78,10 +69,6 @@ const App = () => {
           <h2 className='listTitle'>Done..! 🎉</h2>
           <div className='wrapper'>
             <div className='todoBox'>
-              <div>
-                <h2></h2>
-                <p></p>
-              </div>
               <div className='listBtns'>
                 <button className='deleteBtn'>삭제하기</button>
                 <button className='completeBtn'>완료</button>
@@ -89,6 +76,21 @@ const App = () => {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+const Box = ({ item, deleteFunction }) => {
+  return (
+    <div key={item.id} className='todoBox'>
+      {item.title}
+      {item.context}
+      <div className='listBtns'>
+        <button className='deleteBtn' onClick={() => deleteFunction(item.id)}>
+          삭제하기
+        </button>
+        <button className='completeBtn'>완료</button>
       </div>
     </div>
   );
