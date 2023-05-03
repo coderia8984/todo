@@ -83,3 +83,12 @@
   height: 40px;
   width: 50%;
 }
+
+.cancleBtn {
+  background-color: #fff;
+  border: 2px solid green;
+  border-radius: 8px;
+  cursor: pointer;
+  height: 40px;
+  width: 50%;
+}

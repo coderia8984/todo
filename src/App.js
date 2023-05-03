@@ -1,17 +1,29 @@
 import React, { useState } from "react";
 import "./App.css";
+import WorkingBox from "./components/WorkingBox";
+import DoneBox from "./components/DoneBox";
 
 const App = () => {
+  const date = Date.now();
+  const [title, setTitle] = useState("");
+  const [context, setContext] = useState("");
+
   const [cardContext, setCardContext] = useState([
     {
-      id: 1,
-      title: "리액트공부하기",
-      context: "과제제출하기",
+      id: date + "" + Math.floor(Math.random() * 100),
+      title: "항해 리액트 1주차",
+      context: "과제 제출하기",
+      isDone: 0,
+    },
+    {
+      id: date + "" + Math.floor(Math.random() * 100),
+      title: "항해 듣기",
+      context: "Lv1 과제 끝내기",
+      isDone: 1,
     },
   ]);
 
-  const [title, setTitle] = useState("");
-  const [context, setContext] = useState("");
+  // 현재 시간
 
   const titleChangeHandler = (event) => {
     setTitle(event.target.value);
@@ -23,18 +35,36 @@ const App = () => {
   //추가하기 버튼 클릭
   const addButtonHandler = (e) => {
     e.preventDefault();
+
+    const date = Date.now();
+
+    //새로운 todo 객체 생성
     const newCard = {
-      id: cardContext.length + 1,
+      id: date + "" + Math.floor(Math.random() * 100),
       title,
       context,
+      isDone: 0,
     };
 
+    //객체넣기
     setCardContext([...cardContext, newCard]);
+
+    //초기화
+    setTitle("");
+    setContext("");
   };
 
   //삭제하기 버튼 클릭
   const clickDeleteButtonHandler = (id) => {
     const newCard = cardContext.filter((card) => card.id !== id);
+
+    setCardContext(newCard);
+  };
+
+  //상태변환버튼
+  const isDoneChangeHandler = (id) => {
+    const newCard = cardContext.map((card) => (card.id === id ? { ...card, isDone: Number(!card.isDone) } : card));
+
     setCardContext(newCard);
   };
 
@@ -60,37 +90,27 @@ const App = () => {
           <h2 className='listTitle'>Working.. 🔥</h2>
           <div>
             <div className='wrapper'>
-              {cardContext.map(function (item) {
-                return <Box key={item.id} item={item} deleteFunction={clickDeleteButtonHandler} />;
-              })}
+              {cardContext
+                .filter((item) => {
+                  return item.isDone === 0;
+                })
+                .map((item) => {
+                  return <WorkingBox key={item.id} item={item} deleteFunction={clickDeleteButtonHandler} isDoneChangeHandler={isDoneChangeHandler} />;
+                })}
             </div>
           </div>
 
           <h2 className='listTitle'>Done..! 🎉</h2>
           <div className='wrapper'>
-            <div className='todoBox'>
-              <div className='listBtns'>
-                <button className='deleteBtn'>삭제하기</button>
-                <button className='completeBtn'>완료</button>
-              </div>
-            </div>
+            {cardContext
+              .filter((item) => {
+                return item.isDone === 1;
+              })
+              .map((item) => {
+                return <DoneBox key={item.id} item={item} deleteFunction={clickDeleteButtonHandler} isDoneChangeHandler={isDoneChangeHandler} />;
+              })}
           </div>
         </div>
-      </div>
-    </div>
-  );
-};
-
-const Box = ({ item, deleteFunction }) => {
-  return (
-    <div key={item.id} className='todoBox'>
-      {item.title}
-      {item.context}
-      <div className='listBtns'>
-        <button className='deleteBtn' onClick={() => deleteFunction(item.id)}>
-          삭제하기
-        </button>
-        <button className='completeBtn'>완료</button>
       </div>
     </div>
   );
